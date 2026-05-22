@@ -1,11 +1,12 @@
 /*
     Date: 2026-05-15 AD { 2083-02-01 BS }
     Author: Pallav Bhattarai
-    BCA-IT { 1st Semester }
-    Registration No: 024-3-2-07345-2025
-    Symbol Number: 312794
+            Aayush Timalsina
+            Dipesh Dahal
+    Course: BCA-IT { 1st Semester }
+    
 */
-
+// Add Students Attendance System in C
 /* 
             **Student Management System**
     This program implements a simple student management system in C.
