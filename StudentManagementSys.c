@@ -1,216 +1,295 @@
 /*
     Date: 2026-05-15 AD { 2083-02-01 BS }
-    Author: Pallav Bhattarai
-            Aayush Timalsina
-            Dipesh Dahal
+    Done By: Pallav Bhattarai, Aayush Timalsina, Dipesh Dahal
     Course: BCA-IT { 1st Semester }
-    
+    Project: Student Management & Attendance System
 */
-// Student Management & Attendance System in C
+
 /* 
-            **Student Management System**
-    This program implements a simple student management system in C.
-    It allows users to add, display, search, and delete student records.
-    Each student record consists of a name, roll number, marks, and attendance.
-    The program uses a structure, switchCase, FileHandling .
+    **Student Management & Attendance System**
+    A simple C project to manage student details and record daily attendance.
+    Features: Registering entries, viewing records, searching, dropping records, 
+    and a sequential batch roll-call system. Uses Structures and File handling.
 */
 
-#include <stdio.h>              // Standard Input/Output library for printf() and scanf()
-#include <stdlib.h>             // Standard Library for exit() and file management functions
-#include <string.h>             // String manipulation library for handling name strings
+#include <stdio.h>              // For standard screen input and output
+#include <stdlib.h>             // For exit() and system operations
+#include <string.h>             // For handling names/strings
 
-// Alias for the student structure using typedef
+// Structure template for single student record
 typedef struct {
-    int roll;                   // Stores the unique ID/Roll number of the student
-    char name[50];              // Character array (string) to hold the student's full name
-    float marks;                // Stores total or percentage marks achieved
-    float attendance;           // Stores the student's attendance percentage (0.00% to 100.00%)
+    int roll;
+    char name[50];
+    float marks;
+    int attended_days;          // Classes attended
+    int total_days;             // Total classes held
 } Student;
 
-// User-defined function prototypes (tells the compiler these exist later in the file)
+// Main operational functions
 void addRecord();
 void displayRecords();
 void searchRecord();
+void markAttendance();          
 void deleteRecord();
 
 int main() {
-    int choice;                 // Variable to store the user's menu selection
+    int choice;
 
-    // Infinite loop to keep the system active until option 5 (Exit) is intentionally chosen
+    // Continuous user interactive dashboard menu
     while(1) {  
-        // Displaying User Interface Menu options
-        printf("\n--- STUDENT MANAGEMENT SYSTEM ---");
-        printf("\n1. Add Student & Attendance");
+        printf("\n--- STUDENT MANAGEMENT & ATTENDANCE SYSTEM ---");
+        printf("\n1. Add New Student");
         printf("\n2. View All Students");
         printf("\n3. Search Student");
-        printf("\n4. Delete Student");
-        printf("\n5. Exit");
+        printf("\n4. Delete Student Record");
+        printf("\n5. Take Daily Roll Call (Attendance)"); 
+        printf("\n6. Exit");
         printf("\nEnter choice: ");
-        scanf("%d", &choice);   // Read user choice from console
+        scanf("%d", &choice);
 
-        // Divert program execution based on user selection
         switch(choice) {
-            case 1: 
-                addRecord();       // Call function to insert a new student entry
-                break;
-            case 2: 
-                displayRecords();  // Call function to print all records on screen
-                break;
-            case 3: 
-                searchRecord();    // Call function to look up a specific roll number
-                break;
-            case 4: 
-                deleteRecord();    // Call function to wipe a student record
-                break;
-            case 5: 
-                printf("\nExiting system. Goodbye!\n");
-                exit(0);           // Cleanly terminate the console program execution
-            default: 
-                printf("\nInvalid option! Please enter a number between 1 and 5.");
+            case 1: addRecord(); break;
+            case 2: displayRecords(); break;
+            case 3: searchRecord(); break;
+            case 4: deleteRecord(); break;
+            case 5: markAttendance(); break; 
+            case 6: printf("\nExiting system...\n"); exit(0);
+            default: printf("\nInvalid option! Try again.");
         }
     }
-    return 0;                   // Standard return statement indicating successful execution
+    return 0;
 }
 
+// 1. Adds a new student record to the file
 void addRecord() {
-    // Open "students.txt" in Append mode ("a") to add text data safely without wiping previous entries
-    FILE *fp = fopen("students.txt", "a");  
-    Student s;                  // Create a local structure instance to hold user inputs
+    FILE *fp;
+    Student s, temp;
+    int rollExists = 0;
 
-    // Safety check: Verify if the storage file can be accessed/created on disk
-    if (fp == NULL) {       
-        printf("Error: Could not open or create the database file.");
-        return;                 // Stop execution and return to main menu
+    printf("\nEnter Roll Number: ");
+    scanf("%d", &s.roll);
+
+    // Read file to check if roll number is already taken
+    fp = fopen("students.txt", "r");
+    if (fp != NULL) {
+        while (fscanf(fp, "%d\t%[^\t]\t%f\t%d\t%d\n", &temp.roll, temp.name, &temp.marks, &temp.attended_days, &temp.total_days) != EOF) {
+            if (temp.roll == s.roll) {
+                rollExists = 1; // Duplicate match found
+                break;
+            }
+        }
+        fclose(fp);
     }
 
-    // Input collection from user console
-    printf("\nEnter Roll: ");
-    scanf("%d", &s.roll);
-    
+    // Stop execution if roll number is a duplicate
+    if (rollExists == 1) {
+        printf("Error: Roll Number %d already exists! Entry blocked.\n", s.roll);
+        return;
+    }
+
+    // Open file in Append ("a") mode to save new entry safely
+    fp = fopen("students.txt", "a");  
+    if (fp == NULL) {       
+        printf("Error: Could not open file.");
+        return;
+    }
+
     printf("Enter Full Name: ");
-    // " %[^\n]s" reads input text until a newline (Enter key) is encountered, allowing spaces
-    scanf(" %[^\n]s", s.name);          
+    scanf(" %[^\n]s", s.name);  // Reads full string including white spaces
     
     printf("Enter Marks: ");
     scanf("%f", &s.marks);
 
-    printf("Enter Attendance Percentage (%%): ");
-    scanf("%f", &s.attendance);
+    // Initialize clean slate counters for new student tracking
+    s.attended_days = 0;
+    s.total_days = 0;
 
-    // Save structured data cleanly separated by Tabs (\t) and ending with a clear newline (\n)
-    fprintf(fp, "%d\t%s\t%.2f\t%.2f\n", s.roll, s.name, s.marks, s.attendance);
-
-    // Explicitly close file buffer to push data from temporary memory RAM directly to disk storage
+    // Save fields using clean Tab (\t) separations
+    fprintf(fp, "%d\t%s\t%.2f\t%d\t%d\n", s.roll, s.name, s.marks, s.attended_days, s.total_days);
     fclose(fp);
+
     printf("Record saved successfully!\n");
 }
 
+// 2. Prints formatted table of all students from the file
 void displayRecords() {
-    // Open "students.txt" in Read mode ("r")
     FILE *fp = fopen("students.txt", "r");
-    Student s;                  // Temporary structure instance to hold data read from file
+    Student s;
+    float attendance_percentage = 0.0;
 
-    // Safety check: Check if file doesn't exist or is empty
     if (fp == NULL) {
-        printf("\nNo records found. Add a record first!");
-        return;                 // Stop function execution
+        printf("\nNo records found. Add a student first!");
+        return;
     }
 
-    // Print out visual column headers safely formatted with left alignment padding (%-X)
-    printf("\n%-10s %-20s %-10s %-12s", "Roll", "Name", "Marks", "Attendance");
+    // Display aligned column layout labels
+    printf("\n%-7s %-20s %-7s %-12s %%", "Roll", "Name", "Marks", "Attendance");
     printf("\n-----------------------------------------------------------");
 
-    /* 
-       File Reading loop:
-       - %d\t parses the roll number up to the first tab character
-       - %[^\t]\t reads the string until it encounters the next tab character (keeps spaces intact)
-       - %f\t%f\n parses the numeric floats up to the end of the line
-       Loop runs continuously until End Of File (EOF) is flagged.
-    */
-    while (fscanf(fp, "%d\t%[^\t]\t%f\t%f\n", &s.roll, s.name, &s.marks, &s.attendance) != EOF) {
-        // Output row formatted matching column layouts perfectly; %% renders a single % symbol
-        printf("\n%-10d %-20s %-10.2f %-10.2f%%", s.roll, s.name, s.marks, s.attendance);
-    }
+    // Read lines consecutively up to the end of the file
+    while (fscanf(fp, "%d\t%[^\t]\t%f\t%d\t%d\n", &s.roll, s.name, &s.marks, &s.attended_days, &s.total_days) != EOF) {
+        // Prevent math crash (division by zero) if no classes have run yet
+        if (s.total_days > 0) {
+            attendance_percentage = ((float)s.attended_days / s.total_days) * 100.0;
+        } else {
+            attendance_percentage = 0.0;
+        }
 
-    // Close the file buffer cleanly to release system resources
+        printf("\n%-7d %-20s %-7.1f %d/%-9d %.1f%%", s.roll, s.name, s.marks, s.attended_days, s.total_days, attendance_percentage);
+    }
     fclose(fp);
     printf("\n");
 }
 
+// 3. Search a single record using Roll Number lookup boundaries
 void searchRecord() {
-    // Open database file in Read mode
     FILE *fp = fopen("students.txt", "r");
     Student s;
-    int targetRoll;             // Holds user input for target roll number lookup
-    int found = 0;              // Flag variable acting as a true/false condition tracking status
+    int targetRoll, found = 0;
 
-    // Safety check: File absence check
     if (fp == NULL) {
-        printf("\nNo records available to search.");
+        printf("\nNo records found.");
         return;
     }
 
     printf("\nEnter Roll Number to search: ");
     scanf("%d", &targetRoll);
 
-    // Scan database line-by-line using structured field configurations
-    while (fscanf(fp, "%d\t%[^\t]\t%f\t%f\n", &s.roll, s.name, &s.marks, &s.attendance) != EOF) {
-        // Match found condition logic
+    // Scan lines to check for matching targets
+    while (fscanf(fp, "%d\t%[^\t]\t%f\t%d\t%d\n", &s.roll, s.name, &s.marks, &s.attended_days, &s.total_days) != EOF) {
         if (s.roll == targetRoll) {
             printf("\nStudent Found!");
-            printf("\nRoll: %d\nName: %s\nMarks: %.2f\nAttendance: %.2f%%\n", s.roll, s.name, s.marks, s.attendance);
-            found = 1;          // Set status flag to true
-            break;              // Immediate exit loop optimization (no need to scan remaining records)
+            printf("\nRoll: %d\nName: %s\nMarks: %.1f\nAttendance: %d out of %d classes\n", s.roll, s.name, s.marks, s.attended_days, s.total_days);
+            found = 1;
+            break;              // Drop lookup loop early once found
         }
     }
 
-    // Context handler when matching target targetRoll is completely missing
     if (!found) {
         printf("\nStudent with Roll %d not found.\n", targetRoll);
     }
-
-    // Close open stream
     fclose(fp);
 }
 
-void deleteRecord() {
-    FILE *fp;                   // File pointer pointing to the original active data document
-    FILE *ft;                   // File pointer pointing to a transient placeholder staging document
-    Student s;
-    int targetRoll;             // Holds input roll identity flag for target removal
-    int found = 0;              // State flag variable tracking deletion success status
+// 4. Batch Roll Call: Loops through all students sequentially to log tracking metrics
+void markAttendance() {
+    FILE *fp;
+    Student list[100];          // Buffer array cache to hold entries in RAM memory
+    int count = 0, status;
 
-    fp = fopen("students.txt", "r");    // Open source file to review contents line-by-line
+    fp = fopen("students.txt", "r");
     if (fp == NULL) {
-        printf("\nNo records found.");
+        printf("\nNo student database found. Add records first!\n");
         return;
     }
 
-    ft = fopen("temp.txt", "w");        // Establish/Overwrite blank temporary database to clone survivors
+    // Step A: Load entire document lines inside storage caching array
+    while (fscanf(fp, "%d\t%[^\t]\t%f\t%d\t%d\n", &list[count].roll, list[count].name, &list[count].marks, &list[count].attended_days, &list[count].total_days) != EOF) {
+        count++;
+    }
+    fclose(fp);
+
+    if (count == 0) {
+        printf("\nNo students registered yet.\n");
+        return;
+    }
+
+    printf("\n--- DAILY ATTENDANCE ROLL CALL ---");
+    printf("\nEnter (1) for Present | (0) for Absent\n");
+
+    // Step B: Loop through every loaded student row for interactive verification
+    for (int i = 0; i < count; i++) {
+        list[i].total_days += 1; // Increment school working days conducted count
+
+        printf("Roll %d: %-20s -> ", list[i].roll, list[i].name);
+        scanf("%d", &status);
+
+        if (status == 1) {
+            list[i].attended_days += 1; // Increment specific presence counter tracker
+        }
+    }
+
+    // Step C: Re-open file in Write ("w") mode to completely overwrite with updated values
+    fp = fopen("students.txt", "w");
+    for (int i = 0; i < count; i++) {
+        fprintf(fp, "%d\t%s\t%.2f\t%d\t%d\n", list[i].roll, list[i].name, list[i].marks, list[i].attended_days, list[i].total_days);
+    }
+    fclose(fp);
+
+    printf("\nAttendance sheet saved successfully!\n");
+}
+
+// 5. Deletes a record by rewriting the file and skipping the targeted item
+void deleteRecord() {
+    FILE *fp;
+    Student list[100];          // Local processing cache placeholder layout
+    int count = 0, targetRoll, found = 0;
+
+    fp = fopen("students.txt", "r");
+    if (fp == NULL) {
+        printf("\nNo records found to delete.");
+        return;
+    }
+
+    // Step A: Load current file structure cleanly inside system memory
+    while (fscanf(fp, "%d\t%[^\t]\t%f\t%d\t%d\n", &list[count].roll, list[count].name, &list[count].marks, &list[count].attended_days, &list[count].total_days) != EOF) {
+        count++;
+    }
+    fclose(fp);
 
     printf("\nEnter Roll Number to delete: ");
     scanf("%d", &targetRoll);
 
-    // Parse loop evaluating elements within active database
-    while (fscanf(fp, "%d\t%[^\t]\t%f\t%f\n", &s.roll, s.name, &s.marks, &s.attendance) != EOF) {
-        if (s.roll == targetRoll) {
-            found = 1;          // Target row picked up, flag set to true, skip writing to filter out
-            printf("\nRecord for Roll %d deleted successfully!", targetRoll);
+    // Step B: Overwrite file back from scratch using Write ("w") rules, filtering target
+    fp = fopen("students.txt", "w"); 
+    for (int i = 0; i < count; i++) {
+        if (list[i].roll == targetRoll) {
+            found = 1;          // Flag matching element dropped safely
         } else {
-            // Write matching survivors safely over onto the temporary workspace cache
-            fprintf(ft, "%d\t%s\t%.2f\t%.2f\n", s.roll, s.name, s.marks, s.attendance);
+            // Rewrite data of non-matching structural items safely back down
+            fprintf(fp, "%d\t%s\t%.2f\t%d\t%d\n", list[i].roll, list[i].name, list[i].marks, list[i].attended_days, list[i].total_days);
         }
     }
+    fclose(fp);
 
-    // Always release system lock pointers before invoking file mutations (remove/rename)
-    fclose(fp);     
-    fclose(ft);     
-
-    if (!found) {
-        printf("\nRecord not found. Nothing deleted.");
-        remove("temp.txt");     // Wipe clean the obsolete, untouched temporary work staging file
+    if (found) {
+        printf("Record deleted successfully!\n");
     } else {
-        remove("students.txt"); // Erase old master version file housing the targeted item
-        rename("temp.txt", "students.txt"); // Swap identity names converting temp back into standard master layout
+        printf("Record with Roll %d not found.\n", targetRoll);
     }
 }
+
+
+
+/* 
+    ============================================================================
+    💡 VIVA EXAM NOTE: SCALABILITY & MEMORY ARCHITECTURE
+    ============================================================================
+    Current Setup: 
+    - Uses a fixed static array buffer: "Student list[100];" 
+    - Perfect for small, predictable academic collections.
+
+    Real-World / Production Scalability Alternative:
+    To handle thousands of records without hardcoded limits, the architecture 
+    can be upgraded from Stack Memory to Dynamic Heap Allocation using pointers:
+
+    * DYNAMIC POINTER LAYOUT: 
+      Replace the fixed array with a dynamic pointer reference: 
+      "Student *list = NULL;"
+
+    * INITIAL HEAP ALLOCATION: 
+      Allocate a flexible starting block in runtime memory:
+      "list = (Student *)malloc(initial_capacity * sizeof(Student));"
+
+    * AUTO-SCALING OVERFLOW PROTECTION: 
+      Use "realloc()" to dynamically double the available RAM space 
+      the exact moment the loop count hits the capacity threshold.
+
+    * CLEAN RESOURCE CLEANUP: 
+      Use "free(list);" before exiting functions to release memory back 
+      to the OS and guarantee zero system memory leaks.
+
+    Benefit: Eliminates buffer overflow risks and allows the file-scanning 
+    engine to scale seamlessly to any database size.
+    ============================================================================
+*/
