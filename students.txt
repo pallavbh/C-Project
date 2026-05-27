@@ -1,4 +1,4 @@
-1	Pallav Bhattarai	99.00	3	3
-2	Dipesh Dahal	99.00	3	3
-3	Aayush Timalsina	99.00	3	3
-4	Unish Rizal	99.00	2	2
+1	Pallav Bhattarai	99.00	5	5
+2	Dipesh Dahal	99.00	5	5
+3	Aayush Timalsina	99.00	5	5
+4	Unish Rizal	99.00	4	4

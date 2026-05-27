@@ -1,10 +1,11 @@
 # C Project
 Project Work with C programming
+First Semester
+College of Information Technology and Engineering
 
-# Student Management System
+# Student Management System and Attendance
 
-    This program implements a simple student management system in C.
-    It allows users to add, display, search, and delete student records.
-    Each student record consists of a name, roll number, and marks.
-    The program uses a structure, switchCase, FileHandling .
+    A simple C project to manage student details and record daily attendance.
+    Features: Registering entries, viewing records, searching, dropping records, 
+    and a sequential batch roll-call system. Uses Structures and File handling
 
