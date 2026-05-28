@@ -263,7 +263,7 @@ void deleteRecord() {
 
 /* 
     ============================================================================
-    💡 VIVA EXAM NOTE: SCALABILITY & MEMORY ARCHITECTURE
+    💡 NOTE: SCALABILITY & MEMORY ARCHITECTURE
     ============================================================================
     Current Setup: 
     - Uses a fixed static array buffer: "Student list[100];" 
