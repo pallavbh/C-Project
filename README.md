@@ -1,104 +1,88 @@
 # Student Management & Attendance System
 
-A comprehensive C console application designed for automated student record cataloging and daily tracking metrics. This project was developed as an academic assignment for the Bachelor of Computer Applications in Information Technology (BCA-IT) program.
+A compact C console application designed for automated student record management and daily attendance tracking. This project was developed as a BCA-IT 1st-semester academic assignment.
 
----
+## 📋 Project Overview
 
-## 👨‍💻 Authors
-- **Pallav Bhattarai**
-- **Aayush Timalsina**
-- **Dipesh Dahal**
+This system acts as a digital replacement for traditional paper registers. It uses file-based storage (`students.txt`) to maintain persistent data across sessions, allowing for CRUD (Create, Read, Update, Delete) operations on student records and a sequential roll-call system.
 
-## 📚 Academic Metadata
-- **Course:** BCA-IT (1st Semester)
-- **Affiliation:** Purbanchal University
-- **Date:** June 2, 2026
+## 🛠️ Data Architecture
 
----
-
-## 📖 Project Overview
-
-This system acts as a digital replacement for traditional paper classroom logs. It implements core data persistence mechanisms using localized standard structure templates and persistent flat-file tracking architectures.
-
-### Data Structure
+The system organizes information using a structured data block:
 
 ```c
 typedef struct {
-    int roll;               // Unique identification index
-    char name[50];          // Full string textual identity array
-    float marks;            // Academic performance point tracking
-    int attended_days;      // Integer metric for registered presence
-    int total_days;         // Total operational lecture instances held
+    int roll;            // Unique identification index
+    char name[50];       // Student name
+    float marks;         // Academic performance
+    int attended_days;   // Presence counter
+    int total_days;      // Total lectures held
 } Student;
 ```
 
-### ✨ Features
+## � Files Structure
 
-- **Duplicate Insertion Blocking:** Scans existing records to guarantee unique Roll Number allocation.
-- **Persistent Flat-File Storage:** Utilizes tab-separated values (`\t`) inside students.txt.
-- **Dynamic Percentage Calculations:** Computes real-time presence metrics with crash guards.
-- **Targeted Binary Lookups:** Isolates records dynamically using target key variables.
-- **Interactive Dashboard:** Provides a continuous terminal UI for straightforward navigation.
+- `StudentManagementSys.c` - Core implementation with all functions.
+- `students.txt` - Persistent database file (tab-separated format).
+  - Format: `roll\tname\tmarks\tattended_days\ttotal_days`
+  - Example: `101\tJohn Doe\t85.5\t20\t22`
 
-### 📂 Files Structure
+## 🧭 Program Menu
 
-- `StudentManagementSys.c` - Core implementation script.
-- `students.txt` - Persistent database file managed by the program.
+The system provides these options:
 
-### 🚀 Build & Run
+1. **Add New Student** - Register a new student with validation for duplicate roll numbers.
+2. **View All Students** - Display all records in a formatted table with attendance percentages.
+3. **Search Student** - Look up a student by roll number.
+4. **Delete Student Record** - Remove a student and rewrite the file.
+5. **Take Daily Roll Call** - Mark attendance for all students and update the file.
+6. **Exit** - Close the program.
 
-Requirements:
-- ANSI C compliant toolchains (e.g., gcc or clang).
+## �🚀 Key Features
 
-Build Instructions:
-- Compile the source using your terminal:
+- **Duplicate Prevention:** Validates roll numbers during registration to ensure uniqueness.
+- **Persistent Storage:** Uses tab-separated values in `students.txt` for reliable data retention.
+- **Dynamic Metrics:** Automatically calculates attendance percentages with division-by-zero protection.
+- **Interactive UI:** A user-friendly switch-case dashboard for navigation.
+
+## 🏗️ System Limitations
+
+- **Fixed Capacity:** Currently hardcoded for a maximum of 100 students due to static array allocation.
+- **Write Cycle Risks:** Overwrites the data file entirely during updates; a power failure during the write-cycle could potentially corrupt the file.
+- **Input Sensitivity:** Standard `scanf` implementation lacks deep error trapping for non-integer inputs.
+- **Case Sensitivity:** Search functions perform exact string matching, requiring precise casing.
+
+## 🔮 Future Development Roadmap
+
+1. **Edit Student Record:** Allow updating student name and marks without deletion/re-entry.
+2. **Generate Attendance Report:** Export list of students with low attendance for follow-up.
+3. **Dynamic Memory Allocation:** Implement Linked Lists or `realloc()` to move away from the 100-record cap.
+4. **Safe File Handling:** Implement temporary staging files (`temp.txt`) to protect against data loss during write cycles.
+5. **Enhanced Search:** Implement case-insensitive logic and partial name matching.
+
+## 🛠️ Build & Run
+
+### Compilation
 
 ```bash
 gcc StudentManagementSys.c -o StudentManagementSys
 ```
 
-### Run Instructions:
+### Execution
 
-**Windows:**
+- **Windows:** `StudentManagementSys.exe`
+- **Linux/macOS:** `./StudentManagementSys`
 
-```dos
-StudentManagementSys.exe
-```
+## 🌐 Repository
 
-**Mac / Linux:**
+https://github.com/pallavbh/C-Project
 
-```bash
-./StudentManagementSys
-```
+## 👨‍💻 Authors
 
-### ⚙️ Operational Workflows
+- Pallav Bhattarai
+- Aayush Timalsina
+- Dipesh Dahal
 
-- **Add Student:** Registers a new record with validation.
-- **View Records:** Displays an aligned tabular representation of all students.
-- **Search Records:** Performs a sequential lookup by Roll Number.
-- **Delete Records:** Filters and removes targeted elements from the database.
-- **Roll Call:** Triggers an incremental loop for attendance logging.
+## ⚖️ License
 
-### ⚠️ Current Limitations
-
-- **Fixed Capacity:** Limited to 100 concurrent entries.
-- **Volatile Write Cycles:** Overwrites the file entirely during updates.
-- **Input Sensitivity:** Basic validation; requires precise character inputs.
-
-### 🔮 Future Roadmaps
-
-- `updateRecord()`: Modify existing records without deletion.
-- `calculateAttendanceReport()`: Generate warning lists for low attendance.
-- `sortRecords()`: Order students by various metrics.
-- `backupData()`: Automatic file recovery routines.
-- `import/export CSV()`: Compatibility with spreadsheet software.
-- `secureAccess()`: Password-protected admin menu.
-- `useDynamicStorage()`: Transition to heap-allocated memory (pointers).
-
-### 🌐 Online Repository
-
-URL: https://github.com/pallavbh/C-Project
-
-### ⚖️ License
-
-This project is designed for educational purposes ( college assignment ) and is open for modification and reference.
+This project is open-source and was created as an assignment for college coursework. It is free to modify and reference for educational purposes.
