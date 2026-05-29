@@ -34,11 +34,11 @@ typedef struct {
 
 ### ✨ Features
 
-- Duplicate Insertion Blocking: Scans existing records to guarantee unique Roll Number allocation.
-- Persistent Flat-File Storage: Utilizes tab-separated values (`\t`) inside students.txt.
-- Dynamic Percentage Calculations: Computes real-time presence metrics with crash guards.
-- Targeted Binary Lookups: Isolates records dynamically using target key variables.
-- Interactive Dashboard: Provides a continuous terminal UI for straightforward navigation.
+- **Duplicate Insertion Blocking:** Scans existing records to guarantee unique Roll Number allocation.
+- **Persistent Flat-File Storage:** Utilizes tab-separated values (`\t`) inside students.txt.
+- **Dynamic Percentage Calculations:** Computes real-time presence metrics with crash guards.
+- **Targeted Binary Lookups:** Isolates records dynamically using target key variables.
+- **Interactive Dashboard:** Provides a continuous terminal UI for straightforward navigation.
 
 ### 📂 Files Structure
 
@@ -57,15 +57,15 @@ Build Instructions:
 gcc StudentManagementSys.c -o StudentManagementSys
 ```
 
-Run Instructions:
+### Run Instructions:
 
-Windows:
+**Windows:**
 
 ```dos
 StudentManagementSys.exe
 ```
 
-Mac / Linux:
+**Mac / Linux:**
 
 ```bash
 ./StudentManagementSys
@@ -73,17 +73,17 @@ Mac / Linux:
 
 ### ⚙️ Operational Workflows
 
-- Add Student: Registers a new record with validation.
-- View Records: Displays an aligned tabular representation of all students.
-- Search Records: Performs a sequential lookup by Roll Number.
-- Delete Records: Filters and removes targeted elements from the database.
-- Roll Call: Triggers an incremental loop for attendance logging.
+- **Add Student:** Registers a new record with validation.
+- **View Records:** Displays an aligned tabular representation of all students.
+- **Search Records:** Performs a sequential lookup by Roll Number.
+- **Delete Records:** Filters and removes targeted elements from the database.
+- **Roll Call:** Triggers an incremental loop for attendance logging.
 
 ### ⚠️ Current Limitations
 
-- Fixed Capacity: Limited to 100 concurrent entries.
-- Volatile Write Cycles: Overwrites the file entirely during updates.
-- Input Sensitivity: Basic validation; requires precise character inputs.
+- **Fixed Capacity:** Limited to 100 concurrent entries.
+- **Volatile Write Cycles:** Overwrites the file entirely during updates.
+- **Input Sensitivity:** Basic validation; requires precise character inputs.
 
 ### 🔮 Future Roadmaps
 
